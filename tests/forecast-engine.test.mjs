@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';
+import {buildForecast} from '../netlify/functions/_lib/forecast-engine.mjs';
+const history=[];let p=150000;for(let i=0;i<180;i++){const drift=.0012+.003*Math.sin(i/9)+.001*Math.cos(i/4);p*=Math.exp(drift);history.push({date:new Date(Date.UTC(2026,0,1+i)).toISOString().slice(0,10),open:p*.995,low:p*.99,high:p*1.01,close:p})}
+const current=history.at(-1).close*1.0015;const f=buildForecast({history,currentMarket:{mid:current,disagreementPct:.004,asOf:'2026-06-30',quality:'high'},usdt:{mid:current*1.004,imbalance:.12,momentum24h:.006,spreadPct:.001,disagreementPct:.005},news:{score:.15,relevantCount:6},macro:{score:.08},now:new Date('2026-06-29T15:00:00Z')});
+assert.ok(Number.isFinite(f.forecast));assert.ok(f.forecast>current*.94&&f.forecast<current*1.06);assert.equal(Object.keys(f.model.weights).length,9);assert.ok(Math.abs(Object.values(f.model.weights).reduce((a,b)=>a+b,0)-1)<1e-6);assert.ok(f.model.backtest.ensemble.samples>=20);assert.equal(f.targetDate,'2026-06-30');console.log('forecast-engine ok',f.forecast,f.model.backtest.skillVsNaive);

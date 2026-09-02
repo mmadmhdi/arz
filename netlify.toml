@@ -1,0 +1,80 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Netlify Free budget mode.
+# Six verified refreshes per day, spaced across the Tehran day.
+# UTC 00:32,04:32,08:32,12:32,16:32,20:32
+# = Tehran 04:02,08:02,12:02,16:02,20:02,00:02.
+[functions."refresh"]
+  schedule = "32 0,4,8,12,16,20 * * *"
+
+# Dedicated fresh snapshot five minutes before the official nightly lock.
+# 19:55 UTC = 23:25 Tehran.
+[functions."prelock-refresh"]
+  schedule = "55 19 * * *"
+
+# Official lock at 23:30 Tehran with one safety retry at 23:50.
+# The function is idempotent. Once a valid lock exists, retry is a cheap no-op.
+[functions."lock-forecast"]
+  schedule = "0,20 20 * * *"
+
+# Historical USDT backfill in two 18-day chunks per run.
+# Four runs/day while incomplete fills ~540 days in roughly four days.
+# After completion, each scheduled run exits immediately after one small state read.
+[functions."backfill-usdt"]
+  schedule = "3 0,6,12,18 * * *"
+
+# One daily reconciliation attempt at 00:45 Tehran.
+# If a reference close is not available yet, it remains pending for the next day.
+[functions."evaluate"]
+  schedule = "15 21 * * *"
+
+[[redirects]]
+  from = "/api/forecast"
+  to = "/.netlify/functions/forecast"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/api/history"
+  to = "/.netlify/functions/history"
+  status = 200
+
+[[redirects]]
+  from = "/api/diagnostics"
+  to = "/.netlify/functions/diagnostics"
+  status = 200
+
+[[redirects]]
+  from = "/api/source-smoke"
+  to = "/.netlify/functions/source-smoke"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Resource-Policy = "same-origin"
+    Strict-Transport-Security = "max-age=31536000"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; object-src 'none'"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

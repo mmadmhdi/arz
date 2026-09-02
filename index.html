@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050706" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Tomorrow's USD / Toman forecast. One number, published before tomorrow." />
+  <title>TMRW / USD</title>
+    <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="mark"></span><span>TMRW / USD</span></div>
+      <div class="clock" aria-label="Current time in Tehran">
+        <div class="clock-time" id="clock">--:--:--</div>
+        <div class="clock-zone">Tehran</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero loading" id="hero" aria-live="polite">
+        <div class="eyebrow">Tomorrow <span class="date" id="date"></span></div>
+        <div class="price-wrap"><div class="price" id="price">—</div></div>
+        <div class="currency">Toman</div>
+        <div class="state"><span class="state-dot"></span><span id="state">Forecast loading</span></div>
+        <div class="fatal" id="fatal">Forecast unavailable. The model did not receive enough verified market data to publish a number.</div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="creator">
+        Created by Mohammad Mahdi Mahdizadeh<br>
+        <a href="mailto:mmd85mmd@gmail.com" id="email">mmd85mmd@gmail.com</a>
+      </div>
+      <div class="meta">
+        <span id="lockMeta">One number. Before tomorrow.</span><br>
+        <span>Not financial advice.</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/site.js" defer></script>
+</body>
+</html>

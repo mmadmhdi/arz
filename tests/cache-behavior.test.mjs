@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict';import {dataFreshness,metaAdjustment} from '../netlify/functions/_lib/state-logic.mjs';
+const now=new Date('2026-09-01T12:00:00Z'),state={sourceAt:{currentMarket:'2026-09-01T11:00:00Z',usdt:'2026-09-01T10:00:00Z',news:'2026-09-01T08:00:00Z',history:'2026-08-31T12:00:00Z'}};const a=dataFreshness(state,now);assert.equal(a.currentMarket,1);assert.equal(a.usdt,2);assert.equal(a.news,4);assert.equal(a.history,24);
+const bad={errors:Array.from({length:24},(_,i)=>({logError:i%2?.02:-.02}))};assert.equal(metaAdjustment(bad).enabled,false);console.log('cache-behavior ok');
